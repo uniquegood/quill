@@ -19,17 +19,24 @@ class ColorPicker extends Picker {
 
   selectItem(item, trigger) {
     super.selectItem(item, trigger);
-    let colorLabel = this.label.querySelector('.ql-color-label');
-    let value = item ? item.getAttribute('data-value') || '' : '';
-    if (colorLabel) {
-      if (colorLabel.tagName === 'line') {
-        colorLabel.style.stroke = value;
-      } else {
-        colorLabel.style.fill = value;
+    const svgShapes = this.label.querySelectorAll('.ql-stroke');
+    const value = item ? item.getAttribute('data-value') || '' : '';
+
+    if (!value) {
+      for (const svgShape of svgShapes) {
+        if (svgShape) {
+          svgShape.style = {};
+        }
+      }
+      return;
+    }
+
+    for (const svgShape of svgShapes) {
+      if (svgShape) {
+        svgShape.style.stroke = value;
       }
     }
   }
 }
-
 
 export default ColorPicker;
