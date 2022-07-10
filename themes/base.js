@@ -16,7 +16,8 @@ const COLORS = [
   "#ffffff", "#facccc", "#ffebcc", "#ffffcc", "#cce8cc", "#cce0f5", "#ebd6ff",
   "#bbbbbb", "#f06666", "#ffc266", "#ffff66", "#66b966", "#66a3e0", "#c285ff",
   "#888888", "#a10000", "#b26b00", "#b2b200", "#006100", "#0047b2", "#6b24b2",
-  "#444444", "#5c0000", "#663d00", "#666600", "#003700", "#002966", "#3d1466"
+  "#444444", "#5c0000", "#663d00", "#666600", "#003700", "#002966", "#3d1466",
+  "custom-picker"
 ];
 
 const FONTS = [ false, 'serif', 'monospace' ];
@@ -89,7 +90,7 @@ class BaseTheme extends Theme {
         if (select.querySelector('option') == null) {
           fillSelect(select, COLORS, format === 'background' ? '#ffffff' : '#000000');
         }
-        return new ColorPicker(select, icons[format]);
+        return new ColorPicker(select, icons[format], this.quill);
       } else {
         if (select.querySelector('option') == null) {
           if (select.classList.contains('ql-font')) {
@@ -147,6 +148,27 @@ BaseTheme.DEFAULTS = extend(true, {}, Theme.DEFAULTS, {
         },
         video: function() {
           this.quill.theme.tooltip.edit('video');
+        },
+        color: function(value) {
+          if (value === 'custom-picker') {
+            const _picker = this.container.querySelector('.custom-picker')
+
+            const picker = _picker || (() => {
+              const picker = document.createElement('input');
+              picker.type = 'color';
+              picker.hidden = true;
+              picker.className = 'custom-picker';
+              this.container.appendChild(picker);
+              return picker
+            })()
+
+            picker.addEventListener('change', () => {
+              this.quill.format('color', picker.value)
+            });
+            picker.click();
+          } else {
+            this.quill.format('color', value);
+          }
         }
       }
     }
