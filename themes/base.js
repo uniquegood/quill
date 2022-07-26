@@ -90,7 +90,7 @@ class BaseTheme extends Theme {
         if (select.querySelector('option') == null) {
           fillSelect(select, COLORS, format === 'background' ? '#ffffff' : '#000000');
         }
-        return new ColorPicker(select, icons[format], this.quill);
+        return new ColorPicker(select, icons[format], this.quill, format);
       } else {
         if (select.querySelector('option') == null) {
           if (select.classList.contains('ql-font')) {
@@ -149,31 +149,38 @@ BaseTheme.DEFAULTS = extend(true, {}, Theme.DEFAULTS, {
         video: function() {
           this.quill.theme.tooltip.edit('video');
         },
-        color: function(value) {
-          if (value === 'custom-picker') {
-            const _picker = this.container.querySelector('.custom-picker')
-
-            const picker = _picker || (() => {
-              const picker = document.createElement('input');
-              picker.type = 'color';
-              picker.hidden = true;
-              picker.className = 'custom-picker';
-              this.container.appendChild(picker);
-              return picker
-            })()
-
-            picker.addEventListener('change', () => {
-              this.quill.format('color', picker.value)
-            });
-            picker.click();
-          } else {
-            this.quill.format('color', value);
-          }
-        }
+        color: pickerHandler('color'),
+        background: pickerHandler('background')
       }
     }
   }
 });
+
+function pickerHandler(format) {
+  return function (value) {
+    if (value === 'custom-picker') {
+      const _picker = this.container.querySelector(`.custom-picker.${format}`)
+
+      const picker =
+        _picker ||
+        (() => {
+          const picker = document.createElement('input')
+          picker.type = 'color'
+          picker.hidden = true
+          picker.classList.add('custom-picker', format);
+          this.container.appendChild(picker)
+          return picker
+        })()
+
+      picker.addEventListener('change', () => {
+        this.quill.format(format, picker.value)
+      })
+      picker.click()
+    } else {
+      this.quill.format(format, value)
+    }
+  }
+}
 
 
 class BaseTooltip extends Tooltip {

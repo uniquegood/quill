@@ -10,6 +10,7 @@ const TOOLBAR_CONFIG = [
   [{ header: ['1', '2', '3', false] }],
   [('bold', 'italic', 'underline', 'link')],
   [{ color: [] }],
+  [{ background: [] }],
   [{ list: 'ordered' }, { list: 'bullet' }],
   ['clean']
 ];
